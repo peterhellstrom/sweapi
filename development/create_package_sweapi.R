@@ -14,9 +14,9 @@ load_all()
 document()
 install()
 
-chk_eagles <- check()
-glimpse(chk_eagles)
-names(chk_eagles)
+chk_sweapi <- check()
+glimpse(chk_chk_sweapi)
+names(chk_chk_sweapi)
 
 test()
 
