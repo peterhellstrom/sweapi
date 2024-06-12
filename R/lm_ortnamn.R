@@ -1,5 +1,3 @@
-# Ortnamn Direkt ----
-
 #' @export
 lm_ortnamn_kriterier <- function(
     query,
@@ -75,6 +73,7 @@ lm_ortnamn_coords <- function(
     query = list(
       punkt = stringr::str_c(northing, easting, sep = ","),
       punktSrid = crs),
-    as = "parsed") |>
+    as = "parsed"
+  ) |>
     lm_ortnamn_unnest_parsed()
 }

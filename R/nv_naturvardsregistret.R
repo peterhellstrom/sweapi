@@ -16,12 +16,14 @@ get_nvrid_wkt <- function(
     sf::st_as_sf() |>
     dplyr::mutate(
       nvrid = nvrid,
-      beslutsstatus = beslutsstatus)
+      beslutsstatus = beslutsstatus
+    )
 
   sf::st_geometry(xy) <- "geom"
 
   if (!is.null(crs_to)) {
-    xy <- xy |> sf::st_transform(crs_to)
+    xy <- xy |>
+      sf::st_transform(crs_to)
   }
 
   if (map) {

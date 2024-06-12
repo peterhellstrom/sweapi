@@ -38,7 +38,8 @@ lm_markhojd_geometry <- function(
     ),
     httr::content_type_json(),
     body = geometry,
-    encode = encode)
+    encode = encode
+  )
 
   httr::content(out, as = as)
 }

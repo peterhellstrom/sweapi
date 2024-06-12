@@ -99,13 +99,13 @@ lm_markhojd_geometry <- function(
 tmp_ortnamn_id <- function(
     id,
     url = "https://api.lantmateriet.se/distribution/produkter/ortnamn/v2.1",
-    token = httr::content(eagles::lm_get_token())$access_token
+    token = httr::content(lm_get_token())$access_token
     ) {
 
   out <- httr::GET(
     url = file.path(url, id),
     config = httr::add_headers(
-      .headers = eagles:::add_headers_token(token),
+      .headers = add_headers_token(token),
       'Accept' = 'application/json'
     )
   )

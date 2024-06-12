@@ -14,9 +14,9 @@ load_all()
 document()
 install()
 
-chk_sweapi <- check()
-glimpse(chk_chk_sweapi)
-names(chk_chk_sweapi)
+chk_pkg <- check()
+dplyr::glimpse(chk_pkg)
+names(chk_pkg)
 
 test()
 
@@ -30,6 +30,24 @@ usethis::create_github_token()
 
 use_readme_rmd()
 build_readme()
+
+# Imports ----
+usethis::use_package("httr", min_version = TRUE)
+usethis::use_package("RCurl", min_version = TRUE)
+usethis::use_package("fs", min_version = TRUE)
+usethis::use_package("remotes", min_version = TRUE)
+usethis::use_package("glue", min_version = TRUE)
+usethis::use_package("dplyr", min_version = TRUE)
+usethis::use_package("purrr", min_version = TRUE)
+usethis::use_package("stringr", min_version = TRUE)
+usethis::use_package("tidyselect", min_version = TRUE)
+usethis::use_package("tibble", min_version = TRUE)
+usethis::use_package("sf", min_version = TRUE)
+usethis::use_package("jsonlite", min_version = TRUE)
+usethis::use_package("leaflet", min_version = TRUE)
+usethis::use_package("lubridate", min_version = TRUE)
+
+usethis::use_tidy_description()
 
 # Ignore ----
 usethis::use_build_ignore(c("backup", "data-raw", "development", "examples"))
