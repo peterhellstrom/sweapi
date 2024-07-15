@@ -15,13 +15,19 @@ lm_get_token <- function(
   #   rlang::set_names("Authorization")
 
   consumer_key_secret <- paste(consumer_key, consumer_secret, sep = ":")
-  basic_auth <- c("Authorization" = paste("Basic", RCurl::base64(consumer_key_secret), sep = " "))
+  basic_auth <- c(
+    "Authorization" = paste(
+      "Basic", RCurl::base64(consumer_key_secret), sep = " "
+    )
+  )
 
   httr::POST(
     url = url,
     config = httr::add_headers(
-      .headers = basic_auth),
-    body = 'grant_type=client_credentials')
+      .headers = basic_auth
+    ),
+    body = 'grant_type=client_credentials'
+  )
 }
 
 # httr::content(lm_get_token())$access_token

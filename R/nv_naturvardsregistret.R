@@ -72,9 +72,76 @@ nv_rest_api <- function(
 
   if (remove_atom_link) {
     x <- x |>
-      dplyr::select(-atom.link)
+      dplyr::select(-"atom.link")
   }
 
   x |>
     dplyr::distinct()
+}
+
+#' @export
+nv_rest_api_httr <- function(
+    .x,
+    base_url = "https://geodata.naturvardsverket.se/naturvardsregistret/rest/v3/omrade/nolinks"
+) {
+  .x |>
+    purrr::pmap(list) |>
+    purrr::map_chr(
+      \(x) httr::modify_url(base_url, query = x)
+    ) |>
+    purrr::map_dfr(
+      jsonlite::fromJSON
+    ) |>
+    tibble::as_tibble() |>
+    dplyr::mutate(
+      dplyr::across(
+        tidyselect::contains("datum"),
+        \(x) lubridate::as_datetime(x/1000, tz = "Europe/Stockholm") |>
+          lubridate::as_date()
+      )
+    )
+}
+
+#' Title
+#'
+#' @param path
+#' @param node
+#'
+#' @return
+#' @export
+#'
+#' @examples
+get_index_nv_geodata <- function(path, node = "pre") {
+
+  rvest::read_html(path) |>
+    rvest::html_node(node) |>
+    rvest::html_text() |>
+    utils::read.table(
+      text = _,
+      sep = "\n",
+      header = TRUE,
+      quote = ""
+    ) |>
+    rlang::set_names("text") |>
+    dplyr::mutate(
+      text = stringr::str_squish(text)
+    ) |>
+    tidyr::separate_wider_delim(
+      cols = text,
+      delim = " ",
+      names = c("file", "date", "time", "size")
+    ) |>
+    tidyr::unite(
+      col = "last_modified",
+      date, time,
+      sep = " "
+    ) |>
+    dplyr::mutate(
+      last_modified = readr::parse_datetime(
+        last_modified,
+        "%Y-%m-%d %H:%M"
+      ),
+      size_bytes = eagles::convert_bytes(size),
+      file_type = tools::file_ext(file)
+    )
 }

@@ -16,22 +16,28 @@ lm_ortnamn_kriterier <- function(
 }
 
 # two different id columns - why?
+# Input x is a list (parsed json-object)
 #' @export
 lm_ortnamn_unnest_parsed <- function(x, crs = 3006) {
-  tibble::tibble(x = x)[5,] |>
-    tidyr::unnest(x) |>
-    tidyr::unnest_wider(x) |>
-    tidyr::unnest_wider(properties, names_sep = "_") |>
-    tidyr::unnest(properties_placering) |>
-    tidyr::unnest_wider(properties_placering) |>
-    tidyr::unnest_wider(punkt, names_sep = "_") |>
-    tidyr::unnest_wider(punkt_coordinates, names_sep = "_") |>
-    dplyr::select(-type, -bbox, -geometry, -punkt_type) |>
-    dplyr::rename(namn = properties_namn, sprak = properties_sprak) |>
+  tibble::tibble(data = x)[5,] |>
+    tidyr::unnest("data") |>
+    tidyr::unnest_wider("data") |>
+    tidyr::unnest_wider("properties", names_sep = "_") |>
+    tidyr::unnest("properties_placering") |>
+    tidyr::unnest_wider("properties_placering") |>
+    tidyr::unnest_wider("punkt", names_sep = "_") |>
+    tidyr::unnest_wider("punkt_coordinates", names_sep = "_") |>
+    dplyr::select(-"type", -"bbox", -"geometry", -"punkt_type") |>
+    dplyr::rename(
+      "namn" = "properties_namn",
+      "sprak" = "properties_sprak",
+      "easting" = "punkt_coordinates_1",
+      "northing" = "punkt_coordinates_2"
+    ) |>
     sf::st_as_sf(
-      coords = c("punkt_coordinates_1", "punkt_coordinates_2"),
-      crs = crs) |>
-    dplyr::group_by(properties_id)
+      coords = c("easting", "northing"),
+      crs = crs
+    )
 }
 
 # type

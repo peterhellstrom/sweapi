@@ -23,36 +23,45 @@ lm_hojdmodell_url <- function(
 # the optional argument main_dir = NULL
 #' @export
 lm_hojdmodell_prepare <- function(
-    .x, ruta = ruta_5, dx = 5000, dy = 5000,
+    .x, ruta = .x$ruta_5, dx = 5000, dy = 5000,
     main_dir = NULL) {
 
   .x |>
     dplyr::mutate(
-      ruta_100 = extract_ruta_100({{ruta}}),
+      ruta_100 = extract_ruta_100( {{ ruta }} ),
       crs = 3006,
-      extract_coords_from_ruta_5({{ruta}}),
-      xmax = xmin + dx,
-      ymax = ymin + dy) |>
+      extract_coords_from_ruta_5( {{ ruta }} )
+    ) |>
+    dplyr::mutate(
+      xmax = .data$xmin + dx,
+      ymax = .data$ymin + dy
+    ) |>
     dplyr::rowwise() |>
     dplyr::mutate(
       file_dl = stringr::str_c(
         main_dir,
-        ruta_100,
-        stringr::str_c(ruta_5, ".tif"),
-        sep = "/"),
+        .data$ruta_100,
+        stringr::str_c(.data$ruta_5, ".tif"),
+        sep = "/"
+      ),
       url_dl = lm_hojdmodell_url(
-        crs = crs,
-        xmin = xmin, ymin = ymin,
-        xmax = xmax, ymax = ymax)
+        crs = .data$crs,
+        xmin = .data$xmin,
+        ymin = .data$ymin,
+        xmax = .data$xmax,
+        ymax = .data$ymax
+      )
     )
 }
 
 #' @export
 lm_hojdmodell_prepare_sf <- function(
     .x, dx = 5000, dy = 5000, crs = 3006) {
+
   purrr::map2(
     .x$xmin, .x$ymin,
-    \(x, y) grid_cell(x, y, delta_x = dx, delta_y = dy)) |>
+    \(x, y) swecoords::grid_cell(x, y, delta_x = dx, delta_y = dy)
+  ) |>
     sf::st_sfc(crs = crs) |>
     sf::st_sf(.x, geometry = _)
 }
@@ -61,16 +70,20 @@ lm_hojdmodell_prepare_sf <- function(
 lm_hojdmodell_download <- function(
     .x,
     user = Sys.getenv("lm_atkomst_ver_user"),
-    password = Sys.getenv("lm_atkomst_ver_pwd")) {
+    password = Sys.getenv("lm_atkomst_ver_pwd"),
+    create_dirs = TRUE
+) {
 
-  # Create download directories
-  dl_dirs <- .x |>
-    dplyr::select(file_dl) |>
-    dplyr::mutate(file_dl = dirname(file_dl)) |>
-    dplyr::distinct() |>
-    dplyr::pull()
+  if (create_dirs) {
+    # Create download directories
+    dl_dirs <- .x |>
+      dplyr::select("file_dl") |>
+      dplyr::mutate("file_dl" = dirname(.data$file_dl)) |>
+      dplyr::distinct() |>
+      dplyr::pull()
 
-  fs::dir_create(dl_dirs)
+    fs::dir_create(dl_dirs)
+  }
 
   # Download data
   # Does remotes::download has an overwrite option?
@@ -83,7 +96,9 @@ lm_hojdmodell_download <- function(
         url = x,
         basic_auth = list(
           user = user,
-          password = password))
+          password = password
+        )
+      )
     }
   )
 }
@@ -96,9 +111,9 @@ lm_hojdmodell_vrt <- function(
     out_vrt) {
 
   .data |>
-    hojdmodell_prepare(main_dir = main_dir) |>
-    dplyr::filter(file_exists(file_dl)) |>
-    dplyr::pull(file_dl) |>
-    gdalbuildvrt(out_vrt) |>
-    gdalinfo(mm = TRUE, stats = TRUE, hist = TRUE)
+    lm_hojdmodell_prepare(main_dir = .data$main_dir) |>
+    dplyr::filter(fs::file_exists(.data$file_dl)) |>
+    dplyr::pull(.data$file_dl) |>
+    gdalUtilities::gdalbuildvrt(out_vrt) |>
+    gdalUtilities::gdalinfo(mm = TRUE, stats = TRUE, hist = TRUE)
 }
