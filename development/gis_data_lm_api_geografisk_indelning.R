@@ -1,69 +1,63 @@
 library(tidyverse)
 library(sf)
 library(httr)
-library(jsonlite)
+library(sweapi)
 
-lm_geografisk_indelning <- function(
-    as = "text",
-    url = "https://api.lantmateriet.se/distribution/produkter/geografiskindelning/v2/Län/25?includeData=oversiktligGeometri&srid=3006",
-    token = httr::content(lm_get_token())$access_token) {
+# https://www.lantmateriet.se/sv/geodata/vara-produkter/produktlista/geografisk-indelning-direkt/
+# https://www.lantmateriet.se/globalassets/geodata/geodatatjanster/tb_geografisk-indelning-direkt-v2.0.1.pdf
 
-  out <- httr::GET(
-    url = url,
-    config = httr::add_headers(
-      .headers = add_headers_token(token)
-    )
-  )
+# Output formats ----
+lm_geografisk_indelning("Län/AB?includeData=detaljeradGeometri&srid=3006", format = "sf")
+lm_geografisk_indelning("Län/AB?includeData=detaljeradGeometri&srid=3006", format = "xml")
+lm_geografisk_indelning("Län/AB?includeData=detaljeradGeometri&srid=3006", format = "json")
 
-  if (!altitude_only) {
-    httr::content(out, as = as)
-  } else {
-    httr::content(out)$geometry$coordinates[[3]]
-  }
-}
+## Use rename option ----
+# NOTE!!! Only tested for Lan and Kommun!
+lm_geografisk_indelning("Län/AB?includeData=detaljeradGeometri&srid=3006", rename = FALSE)
+lm_geografisk_indelning("Län/AB?includeData=detaljeradGeometri&srid=3006", rename = TRUE)
 
-# GET -----
-base_url <- "https://api.lantmateriet.se/distribution/produkter/geografiskindelning/v2"
-url <- "Län/25?includeData=oversiktligGeometri&srid=3006"
-token <- httr::content(eagles::lm_get_token())$access_token
+lm_geografisk_indelning("Kommun/0127?includeData=detaljeradUtanEnklaverGeometri&srid=3006", rename = FALSE)
+lm_geografisk_indelning("Kommun/0127?includeData=detaljeradUtanEnklaverGeometri&srid=3006", rename = TRUE)
 
-out <- httr::GET(
-  url = file.path(base_url, url),
-  config = httr::add_headers(
-    .headers = eagles:::add_headers_token(token),
-    'Accept' = 'application/json'
-  )
-)
+# Län ----
+## Single county/län ----
+lm_geografisk_indelning("Län/01?includeData=detaljeradGeometri&srid=3006")
+lm_geografisk_indelning("Län/AB?includeData=detaljeradGeometri&srid=3006")
 
-out
-httr::content(out, as = "text")
-b <- httr::content(out, as = "text")
-b_parsed <- jsonlite::fromJSON(b)
-str(b_parsed)
+## All ----
+lm_geografisk_indelning("Län?includeData=oversiktligGeometri&srid=3006")
+lm_geografisk_indelning("Län?includeData=detaljeradGeometri&srid=3006")
+lm_geografisk_indelning("Län?includeData=detaljeradUtanEnklaverGeometri&srid=3006")
 
-str(b_parsed$features$properties)
+# Kommun ----
+## All ----
+lm_geografisk_indelning("Kommun?includeData=oversiktligGeometri&srid=3006")
+lm_geografisk_indelning("Kommun?includeData=detaljeradGeometri&srid=3006")
+lm_geografisk_indelning("Kommun?includeData=detaljeradUtanEnklaverGeometri&srid=3006")
 
-b_parsed$features$properties |>
-  as_tibble() |>
-  unnest_wider(lansyta) |>
-  unnest_wider(coordinates, names_sep = "_") |>
-  unnest_wider(coordinates_1, names_sep = "_") |>
-  unnest_wider(coordinates_1_1, names_sep = "_")
+## Specified ----
+lm_geografisk_indelning("Kommun/0127?includeData=detaljeradUtanEnklaverGeometri&srid=3006")
+lm_geografisk_indelning("Kommun/namn/Östhammar?match=CONTAINS&includeData=detaljeradUtanEnklaverGeometri&srid=3006")
+lm_geografisk_indelning("Kommun/namn/Östhammar?match=CONTAINS&includeData=detaljeradGeometri&srid=3006")
 
-dplyr::glimpse(b)
-writeLines(b, "tmp.gml")
+# Distrikt ----
+lm_geografisk_indelning("Distrikt?includeData=detaljeradGeometri&srid=3006")
+lm_geografisk_indelning("Distrikt/212090?includeData=detaljeradGeometri&srid=3006")
+lm_geografisk_indelning("Distrikt/namn/botkyrka?match=CONTAINS&includeData=detaljeradGeometri")
+lm_geografisk_indelning("Distrikt/namn/gävle?match=CONTAINS&includeData=detaljeradGeometri&srid=3012", 3012)
 
-# replacing null geometries with empty geometries
+# Jordregistersocken ----
+lm_geografisk_indelning("Jordregistersocken?includeData=detaljeradGeometri&srid=3006")
+lm_geografisk_indelning("Jordregistersocken/33dd6bda-e9ef-4278-bfaa-9172065c550b?includeData=detaljeradGeometri&srid=3006")
+lm_geografisk_indelning("Jordregistersocken/namn/botkyrka?match=CONTAINS&includeData=detaljeradGeometri&srid=3006")
 
-b_sf <- sf::read_sf("tmp.json") # No geometry column (but coordinates end up in column lansyta)
-b_sf <- sf::read_sf("tmp.gml") # Works
-b_sf <- sf::read_sf(b) # Does not work
-g_geoj_sf <- geojsonsf::geojson_sf(b)
-b1 <- jsonlite::fromJSON(b)
-dplyr::glimpse(b1)
-sf::st_read(b1$features$properties)
-glimpse(b1)
-# POST ----
+# SCB-område ----
+lm_geografisk_indelning("SCB-område/A0669?includeData=detaljeradGeometri&srid=3006")
+# scb_omr <- lm_geografisk_indelning("SCB-område?includeData=detaljeradGeometri&srid=3006")
+# scb_omr |> st_drop_geometry() |> count(typ)
+
+# DEVELOPMENT ----
+## POST ----
 
 geometry <- '"
 {
@@ -90,11 +84,10 @@ out <- httr::POST(
   url = file.path(base_url, url),
   config = httr::add_headers(
     .headers = c(
-      eagles:::add_headers_token(token),
+      sweapi:::add_headers_token(token),
       'Accept' = 'application/json')
   ),
   # httr::content_type_json(),
   body = geometry,
-  encode = "text")
-
-httr::content(out, as = "text")
+  encode = "json"
+)

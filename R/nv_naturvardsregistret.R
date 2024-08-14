@@ -111,6 +111,8 @@ nv_rest_api_httr <- function(
 #' @export
 #'
 #' @examples
+# https://stackoverflow.com/questions/72883605/how-to-download-several-datasets-from-website-stored-in-form-index-of-data-month
+# https://stackoverflow.com/questions/70870646/scrape-data-within-a-table-from-webpage-using-rvest-in-r
 get_index_nv_geodata <- function(path, node = "pre") {
 
   rvest::read_html(path) |>
