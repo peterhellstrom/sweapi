@@ -1,5 +1,18 @@
 # https://download-ver.lantmateriet.se/hojdmodell/wcs/v1?service=WCS&version=2.0.1&request=DescribeCoverage&coverageid=hojdgrid_1m
+
+#' Title
+#'
+#' @param crs
+#' @param xmin
+#' @param ymin
+#' @param xmax
+#' @param ymax
+#' @param url_base
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 lm_hojdmodell_url <- function(
     crs, xmin, ymin, xmax, ymax,
     url_base = "https://download-ver.lantmateriet.se/hojdmodell/wcs/v1") {
@@ -21,7 +34,19 @@ lm_hojdmodell_url <- function(
 # Note: use str_c() instead of file.path()
 # to create paths, only way (?) if we want to include
 # the optional argument main_dir = NULL
+
+#' Title
+#'
+#' @param .x
+#' @param ruta
+#' @param dx
+#' @param dy
+#' @param main_dir
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 lm_hojdmodell_prepare <- function(
     .x, ruta = .x$ruta_5, dx = 5000, dy = 5000,
     main_dir = NULL) {
@@ -54,7 +79,17 @@ lm_hojdmodell_prepare <- function(
     )
 }
 
+#' Title
+#'
+#' @param .x
+#' @param dx
+#' @param dy
+#' @param crs
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 lm_hojdmodell_prepare_sf <- function(
     .x, dx = 5000, dy = 5000, crs = 3006) {
 
@@ -66,7 +101,18 @@ lm_hojdmodell_prepare_sf <- function(
     sf::st_sf(.x, geometry = _)
 }
 
+
+#' Title
+#'
+#' @param .x
+#' @param user
+#' @param password
+#' @param create_dirs
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 lm_hojdmodell_download <- function(
     .x,
     user = Sys.getenv("lm_atkomst_ver_user"),
@@ -104,7 +150,17 @@ lm_hojdmodell_download <- function(
 }
 
 # create virtual raster (vrt) from downloaded tif-files
+
+#' Title
+#'
+#' @param .data
+#' @param main_dir
+#' @param out_vrt
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 lm_hojdmodell_vrt <- function(
     .data,
     main_dir,

@@ -1,4 +1,16 @@
+#' Title
+#'
+#' @param east
+#' @param north
+#' @param altitude_only
+#' @param as
+#' @param url
+#' @param token
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 lm_markhojd_point <- function(
     east,
     north,
@@ -21,7 +33,18 @@ lm_markhojd_point <- function(
   }
 }
 
+#' Title
+#'
+#' @param geometry
+#' @param encode
+#' @param as
+#' @param url
+#' @param token
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 lm_markhojd_geometry <- function(
     geometry,
     encode = "raw",
@@ -34,7 +57,8 @@ lm_markhojd_geometry <- function(
     config = httr::add_headers(
       .headers = c(
         add_headers_token(token),
-        'Accept' = 'application/json')
+        'Accept' = 'application/json'
+      )
     ),
     httr::content_type_json(),
     body = geometry,

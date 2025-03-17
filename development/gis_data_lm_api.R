@@ -194,7 +194,7 @@ geojson_sf(x)
 writeLines(x, "tmp.json")
 
 write_xml(x, "tmp.gml")
-b <- st_read("tmp.gml")
+b <- read_sf("tmp.gml")
 b
 
 ## POST /

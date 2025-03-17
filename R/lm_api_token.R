@@ -4,7 +4,17 @@
 # specified app.
 # 2) then stored locally as environment variables; consumer_key and consumer_secret
 # use e.g. cmd in Windows, setx variable value /M
+
+#' Title
+#'
+#' @param url
+#' @param consumer_key
+#' @param consumer_secret
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 lm_get_token <- function(
     url = "https://api.lantmateriet.se/token",
     consumer_key = Sys.getenv("consumer_key"),

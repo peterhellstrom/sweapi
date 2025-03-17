@@ -1,4 +1,18 @@
+
+#' Title
+#'
+#' @param nvrid
+#' @param beslutsstatus
+#' @param crs
+#' @param crs_to
+#' @param map
+#' @param fill
+#' @param base_url
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 get_nvrid_wkt <- function(
     nvrid,
     beslutsstatus = "Gällande",
@@ -40,7 +54,18 @@ get_nvrid_wkt <- function(
   }
 }
 
+#' Title
+#'
+#' @param str_parameters
+#' @param ...
+#' @param base_url
+#' @param remove_atom_link
+#' @param convert_unix_timestamp
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 nv_rest_api <- function(
     str_parameters,
     ...,
@@ -79,7 +104,15 @@ nv_rest_api <- function(
     dplyr::distinct()
 }
 
+#' Title
+#'
+#' @param .x
+#' @param base_url
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 nv_rest_api_httr <- function(
     .x,
     base_url = "https://geodata.naturvardsverket.se/naturvardsregistret/rest/v3/omrade/nolinks"
@@ -107,7 +140,7 @@ nv_rest_api_httr <- function(
 #' @param path
 #' @param node
 #'
-#' @return
+#' @returns
 #' @export
 #'
 #' @examples

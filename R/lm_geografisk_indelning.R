@@ -6,7 +6,7 @@
 #' @param url
 #' @param token
 #'
-#' @return
+#' @returns
 #' @export
 #'
 #' @examples
@@ -77,7 +77,7 @@ lm_geografisk_indelning <- function(
 #' @param .data
 #' @param .fix_names
 #'
-#' @return
+#' @returns
 #' @export
 #'
 #' @examples
@@ -116,7 +116,7 @@ rename_geografisk_indelning <- function(
 #' @param .detaljtyp
 #' @param .fix_names
 #'
-#' @return
+#' @returns
 #' @export
 #'
 #' @examples

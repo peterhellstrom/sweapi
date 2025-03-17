@@ -1,4 +1,14 @@
+#' Title
+#'
+#' @param query
+#' @param as
+#' @param url
+#' @param token
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 lm_ortnamn_kriterier <- function(
     query,
     as = "text",
@@ -17,7 +27,16 @@ lm_ortnamn_kriterier <- function(
 
 # two different id columns - why?
 # Input x is a list (parsed json-object)
+
+#' Title
+#'
+#' @param x
+#' @param crs
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 lm_ortnamn_unnest_parsed <- function(x, crs = 3006) {
   tibble::tibble(data = x)[5,] |>
     tidyr::unnest("data") |>
@@ -67,7 +86,18 @@ lm_ortnamn_unnest_parsed <- function(x, crs = 3006) {
 ##### type
 
 # Wrapper function
+
+#' Title
+#'
+#' @param easting
+#' @param northing
+#' @param crs
+#' @param token
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 lm_ortnamn_coords <- function(
     easting,
     northing,

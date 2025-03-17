@@ -1,4 +1,11 @@
+#' Title
+#'
+#' @param x
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 extract_ruta_100 <- function(x) {
   stringr::str_c(
     stringr::str_sub(x, 1, 2),
@@ -7,7 +14,14 @@ extract_ruta_100 <- function(x) {
   )
 }
 
+#' Title
+#'
+#' @param x
+#'
+#' @returns
 #' @export
+#'
+#' @examples
 extract_coords_from_ruta_5 <- function(x) {
 
   ymin <- stringr::str_c(
